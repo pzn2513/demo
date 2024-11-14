@@ -1,5 +1,5 @@
 手把手教程：  
-cd ./node_modules/demo-cmtjs-neon  
+cd ./demo-cmtjs-neon  
 node ./test.js  
 node ./lib/1.cjs  
 node ./lib/1.mjs  
