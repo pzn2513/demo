@@ -1,0 +1,58 @@
+{
+  "name": "@ghini/demo-cmtjs-neon",
+  "version": "1.0.2",
+  "description": "这个项目很好的展示了如何兼容多种情况灵活导入：cjs mjs cts mts。虽然我建议js就走mjs路线，但还有不少资源使用其他方式写的；而此项目展示了精简核心，掌握就能更好理解其它所有类型配置。另附对rust构建底层的启蒙学习。处理这些协议问题，真是没什么获得感，做好记录，快速理清就好。",
+  "main": "./lib/index.cjs",
+  "scripts": {
+    "test": "tsc &&cargo test",
+    "cargo-build": "tsc &&cargo build --message-format=json-render-diagnostics > cargo.log",
+    "cross-build": "tsc &&cross build --message-format=json-render-diagnostics > cross.log",
+    "postcargo-build": "neon dist < cargo.log",
+    "postcross-build": "neon dist -m /target < cross.log",
+    "debug": "npm run cargo-build --",
+    "build": "npm run cargo-build -- --release",
+    "build-linux": "npm run cross-build -- --target x86_64-unknown-linux-gnu --release",
+    "cross": "npm run cross-build -- --release",
+    "prepack": "tsc &&neon update",
+    "version": "neon bump --binaries platforms && git add .",
+    "release": "gh workflow run release.yml -f dryrun=false -f version=patch",
+    "dryrun": "gh workflow run publish.yml -f dryrun=true"
+  },
+  "author": "Ghini",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./lib/index.d.mts",
+        "default": "./lib/index.mjs"
+      },
+      "require": {
+        "types": "./lib/index.d.cts",
+        "default": "./lib/index.cjs"
+      }
+    }
+  },
+  "types": "./lib/index.d.cts",
+  "neon": {
+    "type": "library",
+    "org": "@demo",
+    "platforms": "common",
+    "load": "./src/load.cts"
+  },
+  "devDependencies": {
+    "@neon-rs/cli": "^0.1.73",
+    "@tsconfig/node20": "^20.1.4",
+    "@types/node": "^20.11.16",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@neon-rs/load": "^0.1.73"
+  },
+  "optionalDependencies": {
+    "@demo/win32-x64-msvc": "1.0.1",
+    "@demo/darwin-x64": "1.0.1",
+    "@demo/darwin-arm64": "1.0.1",
+    "@demo/linux-x64-gnu": "1.0.1",
+    "@demo/linux-arm64-gnu": "1.0.1"
+  }
+}
